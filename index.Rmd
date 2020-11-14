@@ -1,0 +1,240 @@
+---
+title: "DS News"
+description: |
+  Welcome to the website. I hope you enjoy it!
+site: distill::distill_website
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+# setwd("~/github/news-ds")
+# renv::init()
+# install.packages('install.load')
+# distill needs to be installed, even if not loaded
+# install.packages('distill')
+install.load::install_load('tidyRSS', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT')
+
+# other sources:
+# twitter: top tweets
+# todo: arxiv output
+
+# Learn more about creating websites with Distill at:
+# https://rstudio.github.io/distill/website.html
+
+# Learn more about publishing to GitHub Pages at:
+# https://rstudio.github.io/distill/publish_website.html#github-pages
+
+```
+
+```{r feeds}
+
+feeds = list(
+    'engineering'= c(
+        'openai'= 'https://blog.openai.com/rss/',
+        'fb'= 'https://research.fb.com/blog/feed/',
+        'airbnb-ds'= 'https://medium.com/feed/airbnb-engineering/tagged/data-science',
+        'ggl_dev'= 'http://feeds.feedburner.com/GDBcode',
+        'ggl_ai'= 'http://feeds.feedburner.com/blogspot/gJZg',
+        'instacart'= ' https://tech.instacart.com/feed',
+        'Google Developers'= 'http://feeds.feedburner.com/GDBcode',
+        'Google Open Source'= 'http://feeds.feedburner.com/GoogleOpenSourceBlog',
+        'fb_code'= 'https://code.fb.com/feed/',
+        'uber_ai'= 'https://eng.uber.com/tag/uber-ai-labs/feed',
+        'uber_eng'= 'https://eng.uber.com/feed',
+        'netflix_tech'= 'https://medium.com/feed/netflix-techblog',
+        'pinterest'= 'https://medium.com/feed/@Pinterest_Engineering',
+        'sebrash'= 'https://sebastianraschka.com/rss_feed.xml',
+        'zillow'= 'https://www.zillow.com/tech/feed/'
+    ),
+    'tutorials'= c(
+        'databricks'= 'https://databricks.com/feed',
+        'datacamp'= 'https://www.datacamp.com/community/rss.xml',
+        'ml_mast'= 'https://machinelearningmastery.com/blog/feed/',
+        'twrds'= 'https://towardsdatascience.com/feed/',
+        'devto'= 'https://dev.to/feed'
+    ),
+    'general'= c(
+        'gnews'= 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US&ned=us&gl=US',
+        'espn'= 'http=//www.espn.com/espn/rss/news',
+        'Science'= 'http=//feeds.reuters.com/reuters/scienceNews',
+        'TopNews'= 'http=//feeds.reuters.com/reuters/topNews',
+        'World News'= 'http=//feeds.reuters.com/Reuters/worldNews',
+        'Sports News'= 'http=//feeds.reuters.com/reuters/sportsNews',
+        'BBC'= 'http=//feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml',
+        'BBC US'= 'http=//feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml?edition=us',
+        'BBC International'= 'http=//feeds.bbci.co.uk/news/rss.xml?edition=int',
+        'Snopes'= 'https://www.snopes.com/feed/'
+    ),
+    'tech'= c(
+        'mit'= 'https://www.technologyreview.com/stories.rss',
+        'fc'= 'https://www.fastcompany.com/technology/rss',
+        'reuters'= 'http=//feeds.reuters.com/reuters/technologyNews',
+        'bbc'= 'http=//feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
+        'tc'= 'https://techcrunch.com/startups/',
+        'vb'= 'https://venturebeat.com/feed/'
+    ),
+    'startups'= c(
+        'avc'= 'http=//feeds.feedburner.com/avc',
+        'andrew_chen'= 'https://andrewchen.co/feed/',
+        'ycombinator'= 'https://blog.ycombinator.com/feed/',
+        'A Horowitz'= 'https://a16z.com/feed/',
+        'AVC'= 'https://avc.com/feed/',
+        'Sam Altman'= 'http=//blog.samaltman.com/posts.atom',
+        'seth_godin' = 'https://seths.blog/feed/'
+    ),
+    'religious'= c(
+        'lds'= 'https://www.mormonnewsroom.org/rss'
+    )
+)
+
+```
+
+
+```{r, layout='l-screen'}
+# df = tidyfeed('https://blog.openai.com/rss/')
+# df = tidyfeed('https://www.datatau.com/rss/')
+
+loop_feeds <- function(feed) {
+  df = data.frame()
+  for (f in feed){
+    message(blue('Starting:', f))
+    # try-catch: https://stackoverflow.com/a/12195574
+    df_feed = tryCatch({
+      tidyfeed(f)
+    }, error=function(cond) {
+      message(red$bold("URL does not seem to exist:", f, cond))
+      return(NA)
+    },
+    warning=function(cond) {
+      message(cat(red$bold("URL caused a warning:", f)))
+      message("Here's the original warning message:")
+      message(cond)
+      # Choose a return value in case of warning
+      return(NULL)
+    }, finally={
+      message(green("Processed URL:", f))
+    }
+    )
+    # keep relevant names
+    
+    # print(names(df)); print(names(df_feed))
+    if (is.data.frame(df_feed)){
+      message(dim(df_feed), paste(names(df_feed), collapse = ', '))
+      for (col in names(df)) {
+        if (!(col %in% names(df_feed))) {df_feed[col] = NA}
+      }
+      # standardize the names - different feeds have different names
+      if ('entry_title' %in% names(df_feed)) {df_feed$item_title = df_feed$entry_title}
+      if ('entry_link' %in% names(df_feed)) {df_feed$item_link = df_feed$entry_link}
+      if ('entry_content' %in% names(df_feed)) {df_feed$item_description = df_feed$entry_title}
+      if ('entry_last_updated' %in% names(df_feed)) {df_feed$item_pub_date = df_feed$entry_last_updated}
+      
+      df <- df_feed %>% 
+        select(feed_title, feed_link,
+               item_title, item_link, item_description, item_pub_date) %>%
+        rbind(df, .)
+    } else {
+      cat('feed did not work: ', red$bold$underline(f))
+    }
+  }
+  return(df)
+}
+
+process_feed <- function(df){
+  df %>% 
+    distinct() %>% # remove duplicated queries
+    arrange(desc(item_pub_date)) %>%
+    mutate(
+      # add + 1 because I was getting dates as -1
+      date_diff = difftime(Sys.Date() + 1, item_pub_date, unit='days'),
+      date_fmt = paste0(
+        '<p style="display:none">', item_pub_date, '</p>',
+        format(item_pub_date, '%a %b %d, %Y'),
+        '<span style="color:gray">\n(', round(date_diff), ' days ago)</span>'
+      ),
+      blog = cell_spec(feed_title, "html", link=feed_link),
+      linked_title = cell_spec(item_title, 'html', link=item_link),
+      post = paste(
+        ifelse(
+          is.na(item_description), linked_title, 
+          paste0(linked_title, 
+                 '<details><summary>', 
+                 substring(item_description, 1, 100),
+                 '</summary>',
+                 substring(item_description, 101, 1000000),
+                 '</details>')
+        )
+      )
+      # post = paste(blog, cell_spec(date, 'html', link=item_link), item_description)
+    ) %>%
+    select(blog, date_fmt, post) 
+}
+
+make_dt <- function(df) {
+  datatable(
+    df, 
+    escape=F,
+    rownames=F,
+    colnames = c('Blog', 'Date', 'Post'),
+    # search isn't necessary as global search is good enough
+    # filter='top',
+    options = list(
+      pageLength = 10,
+      dom = 'ftlp',
+      lengthMenu = c(5, 10, 15, 20),
+      # enforce column width
+      # autoWidth = TRUE,
+      # columnDefs = list(list(width = '50px', targets = c(0, 1))),
+      
+      # background color
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+        "}"
+      )
+    )
+  )
+}
+
+# TODO: try out kable for neat columns (better mobile?)
+# kable(list(x, x, x), "html", escape = FALSE) %>%
+# kable_styling(bootstrap_options = c("hover", "condensed"))
+
+```
+
+
+
+# Tech/ML/DS blogs
+```{r ds, layout='l-screen'}
+df1 <- loop_feeds(feeds$engineering) 
+df1_p <- process_feed(df1)
+make_dt(df1_p)
+```
+
+# Tutorials
+```{r tutorials, layout='l-screen'}
+df2 <- loop_feeds(feeds$tutorials) 
+df2_p <- process_feed(df2)
+make_dt(df2_p)
+```
+
+## DS + tutorials
+```{r}
+kable(list(head(df1_p, 20), head(df2_p, 20)), 'html', escape=F) %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+
+# Tech news
+```{r tech, layout='l-screen'}
+df3 <- loop_feeds(feeds$tech) 
+df3_p <- process_feed(df3)
+make_dt(df3_p)
+```
+
+# Startup
+```{r startup, layout='l-screen'}
+df4 <- loop_feeds(feeds$startup) 
+df4_p <- process_feed(df4)
+make_dt(df4_p)
+```
