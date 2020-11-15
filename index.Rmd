@@ -8,6 +8,7 @@ description: |
 site: distill::distill_website
 ---
 
+**Last updated `r format(lubridate::now("US/Pacific"), '%a, %b %d %I:%M %p')`** PST.
 
 
 ```{r setup, include=FALSE}
@@ -192,10 +193,11 @@ process_feed <- function(df){
                  '</details>')
         )
       ),
-      post = paste0(blank_date, post, " | ", date_fmt, " | ", blog)
+      # post = paste0(blank_date, post, " | ", date_fmt, " | ", blog)
       # post = paste(blog, cell_spec(date, 'html', link=item_link), item_description)
+      blog = paste0(blank_date, blog, '<br>', date_fmt)
     ) %>%
-    select(post) 
+    select(blog, post) 
 }
 # df1_p <- process_feed(df1)
 # make_dt(df1_p)
