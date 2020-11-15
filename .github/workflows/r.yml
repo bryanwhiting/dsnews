@@ -7,8 +7,6 @@
 # additional example workflows available for the R community.
 # renv::snapshot() to lock the lockfile
 
-name: Covid build
-
 name: R
 on:
   # Trigger the workflow on push or pull request,
