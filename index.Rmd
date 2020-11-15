@@ -48,7 +48,7 @@ dk_orange = "#D55E00"
 feeds = list(
     'engineering'= c(
         'openai'= 'https://blog.openai.com/rss/',
-        'fb'= 'https://research.fb.com/blog/feed/',
+        'fb'= 'https://research.fb.com/feed/',
         'airbnb-ds'= 'https://medium.com/feed/airbnb-engineering/tagged/data-science',
         'ggl_dev'= 'http://feeds.feedburner.com/GDBcode',
         'ggl_ai'= 'http://feeds.feedburner.com/blogspot/gJZg',
@@ -64,7 +64,7 @@ feeds = list(
         'zillow'= 'https://www.zillow.com/tech/feed/'
     ),
     'tutorials'= c(
-        'databricks'= 'https://databricks.com/feed',
+        # 'databricks'= 'https://databricks.com/feed',
         'datacamp'= 'https://www.datacamp.com/community/rss.xml',
         'ml_mast'= 'https://machinelearningmastery.com/blog/feed/',
         'twrds'= 'https://towardsdatascience.com/feed/',
@@ -85,9 +85,9 @@ feeds = list(
     'tech'= c(
         'mit'= 'https://www.technologyreview.com/stories.rss',
         'fc'= 'https://www.fastcompany.com/technology/rss',
-        'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
+        # 'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
         'bbc'= 'http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
-        'tc'= 'https://techcrunch.com/startups/',
+        'tc'= 'https://techcrunch.com/startups/feed/',
         'vb'= 'https://venturebeat.com/feed/'
     ),
     'startups'= c(
@@ -97,7 +97,7 @@ feeds = list(
         'ycombinator'= 'https://blog.ycombinator.com/feed/',
         'A Horowitz'= 'https://a16z.com/feed/',
         'AVC'= 'https://avc.com/feed/',
-        'Sam Altman'= 'http://blog.samaltman.com/posts.atom',
+        # 'Sam Altman'= 'http://blog.samaltman.com/posts.atom',
         'seth_godin' = 'https://seths.blog/feed/'
     ),
     'podcasts'=c(
@@ -207,8 +207,7 @@ make_dt <- function(df) {
     df, 
     escape=F,
     rownames=F,
-    colnames='Post',
-    # colnames = c('Blog', 'Date', 'Post'),
+    colnames = c('Blog', 'Post'),
     # search isn't necessary as global search is good enough
     # filter='top',
     options = list(
