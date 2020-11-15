@@ -1,2 +1,0 @@
-# dsnews
-ds news

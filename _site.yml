@@ -1,7 +1,10 @@
 name: "."
-title: "DS News"
+title: "Just DS News"
 description: |
-  DS News
+  News is broken. Probably because a data scientist somewhere broke it somehow 
+  by creating some echo-chamber, personalization models. Well, this site is a 
+  data scientist's attempt to de-personalize data science news and just let 
+  you know what's happening.
 output_dir: "docs"
 navbar:
   right:
@@ -9,4 +12,8 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
-output: distill::distill_article
+output: 
+  distill::distill_article: 
+    toc: True
+    toc_depth: 1
+    css: styles.css

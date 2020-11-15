@@ -1,9 +1,14 @@
 ---
-title: "DS News"
+title: "Data Science News"
 description: |
-  Welcome to the website. I hope you enjoy it!
+  News is broken. Probably because a data scientist somewhere broke it somehow 
+  by creating some echo-chamber, personalization models. Well, this site is a 
+  data scientist's attempt to de-personalize data science news and just let 
+  you know what's happening. 
 site: distill::distill_website
 ---
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
@@ -12,7 +17,18 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 # install.packages('install.load')
 # distill needs to be installed, even if not loaded
 # install.packages('distill')
-install.load::install_load('tidyRSS', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT')
+install.load::install_load('tidyRSS', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT', 'glue')
+
+# colors for pander palette
+# ggthemes::palette_pander(10)
+# "#56B4E9" "#009E73" "#F0E442" "#0072B2" "#D55E00" "#CC79A7" "#999999" "#E69F00"
+gray = "#999999"
+orange = "#E69F00"
+lt_blue ="#56B4E9"
+green = "#009E73"
+yellow = "#F0E442"
+dk_blue = "#0072B2"
+dk_orange = "#D55E00"
 
 # other sources:
 # twitter: top tweets
@@ -55,32 +71,39 @@ feeds = list(
     ),
     'general'= c(
         'gnews'= 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US&ned=us&gl=US',
-        'espn'= 'http=//www.espn.com/espn/rss/news',
-        'Science'= 'http=//feeds.reuters.com/reuters/scienceNews',
-        'TopNews'= 'http=//feeds.reuters.com/reuters/topNews',
-        'World News'= 'http=//feeds.reuters.com/Reuters/worldNews',
-        'Sports News'= 'http=//feeds.reuters.com/reuters/sportsNews',
-        'BBC'= 'http=//feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml',
-        'BBC US'= 'http=//feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml?edition=us',
-        'BBC International'= 'http=//feeds.bbci.co.uk/news/rss.xml?edition=int',
+        'espn'= 'http://www.espn.com/espn/rss/news',
+        'Science'= 'http://feeds.reuters.com/reuters/scienceNews',
+        'TopNews'= 'http://feeds.reuters.com/reuters/topNews',
+        'World News'= 'http://feeds.reuters.com/Reuters/worldNews',
+        'Sports News'= 'http://feeds.reuters.com/reuters/sportsNews',
+        'BBC'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml',
+        'BBC US'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml?edition=us',
+        'BBC International'= 'http://feeds.bbci.co.uk/news/rss.xml?edition=int',
         'Snopes'= 'https://www.snopes.com/feed/'
     ),
     'tech'= c(
         'mit'= 'https://www.technologyreview.com/stories.rss',
         'fc'= 'https://www.fastcompany.com/technology/rss',
-        'reuters'= 'http=//feeds.reuters.com/reuters/technologyNews',
-        'bbc'= 'http=//feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
+        'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
+        'bbc'= 'http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
         'tc'= 'https://techcrunch.com/startups/',
         'vb'= 'https://venturebeat.com/feed/'
     ),
     'startups'= c(
-        'avc'= 'http=//feeds.feedburner.com/avc',
+        'tim_ferris'= 'https://tim.blog/feed/',
+        'avc'= 'http://feeds.feedburner.com/avc',
         'andrew_chen'= 'https://andrewchen.co/feed/',
         'ycombinator'= 'https://blog.ycombinator.com/feed/',
         'A Horowitz'= 'https://a16z.com/feed/',
         'AVC'= 'https://avc.com/feed/',
-        'Sam Altman'= 'http=//blog.samaltman.com/posts.atom',
+        'Sam Altman'= 'http://blog.samaltman.com/posts.atom',
         'seth_godin' = 'https://seths.blog/feed/'
+    ),
+    'podcasts'=c(
+      'talkpython'= 'https://talkpython.fm/episodes/rss',
+      'data_eng_pod'='https://www.dataengineeringpodcast.com/feed/',
+      'dataframed'='https://www.datacamp.com/community/rss.xml',
+      'freakonomics'='http://feeds.feedburner.com/freakonomicsradio'
     ),
     'religious'= c(
         'lds'= 'https://www.mormonnewsroom.org/rss'
@@ -90,7 +113,7 @@ feeds = list(
 ```
 
 
-```{r, layout='l-screen'}
+```{r}
 # df = tidyfeed('https://blog.openai.com/rss/')
 # df = tidyfeed('https://www.datatau.com/rss/')
 
@@ -146,17 +169,21 @@ process_feed <- function(df){
     arrange(desc(item_pub_date)) %>%
     mutate(
       # add + 1 because I was getting dates as -1
-      date_diff = difftime(Sys.Date() + 1, item_pub_date, unit='days'),
+      date_diff = round(difftime(Sys.Date() + 1, item_pub_date, unit='days')),
+      date_diff = ifelse(date_diff == 0, "", paste0('<span style="color:gray">\n(-', round(date_diff), 'd)</span>')),
+      blank_date = paste0('<p style="display:none">', item_pub_date, '</p>'),
       date_fmt = paste0(
-        '<p style="display:none">', item_pub_date, '</p>',
-        format(item_pub_date, '%a %b %d, %Y'),
-        '<span style="color:gray">\n(', round(date_diff), ' days ago)</span>'
+        blank_date,
+        format(item_pub_date, '%a %m/%d'),
+        date_diff
       ),
-      blog = cell_spec(feed_title, "html", link=feed_link),
-      linked_title = cell_spec(item_title, 'html', link=item_link),
+      blog = cell_spec(feed_title, "html", link=feed_link, new_tab=T),
+      # blog = paste0('<a href="', feed_title,  '" color="#fff" background-color:"#999999">'), 
+      # blog = cell_spec(feed_title, "html",  link=feed_link,  color="#fff", underline=F, background=gray),
+      linked_title = cell_spec(item_title, 'html', link=item_link, new_tab=T),
       post = paste(
         ifelse(
-          is.na(item_description), linked_title, 
+          is.na(item_description) | item_description == item_title, linked_title, 
           paste0(linked_title, 
                  '<details><summary>', 
                  substring(item_description, 1, 100),
@@ -164,18 +191,22 @@ process_feed <- function(df){
                  substring(item_description, 101, 1000000),
                  '</details>')
         )
-      )
+      ),
+      post = paste0(blank_date, post, " | ", date_fmt, " | ", blog)
       # post = paste(blog, cell_spec(date, 'html', link=item_link), item_description)
     ) %>%
-    select(blog, date_fmt, post) 
+    select(post) 
 }
+# df1_p <- process_feed(df1)
+# make_dt(df1_p)
 
 make_dt <- function(df) {
   datatable(
     df, 
     escape=F,
     rownames=F,
-    colnames = c('Blog', 'Date', 'Post'),
+    colnames='Post',
+    # colnames = c('Blog', 'Date', 'Post'),
     # search isn't necessary as global search is good enough
     # filter='top',
     options = list(
@@ -189,12 +220,13 @@ make_dt <- function(df) {
       # background color
       initComplete = JS(
         "function(settings, json) {",
-        "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+        paste0("$(this.api().table().header()).css({'background-color': '", dk_blue, "', 'color': '#fff'});"),
         "}"
       )
     )
   )
 }
+
 
 # TODO: try out kable for neat columns (better mobile?)
 # kable(list(x, x, x), "html", escape = FALSE) %>%
@@ -205,6 +237,7 @@ make_dt <- function(df) {
 
 
 # Tech/ML/DS blogs
+
 ```{r ds, layout='l-screen'}
 df1 <- loop_feeds(feeds$engineering) 
 df1_p <- process_feed(df1)
@@ -212,16 +245,17 @@ make_dt(df1_p)
 ```
 
 # Tutorials
+
 ```{r tutorials, layout='l-screen'}
 df2 <- loop_feeds(feeds$tutorials) 
 df2_p <- process_feed(df2)
 make_dt(df2_p)
 ```
 
-## DS + tutorials
 ```{r}
-kable(list(head(df1_p, 20), head(df2_p, 20)), 'html', escape=F) %>%
-  kable_styling(bootstrap_options = c("hover", "condensed"))
+## DS + tutorials
+# kable(list(head(df1_p, 20), head(df2_p, 20)), 'html', escape=F) %>%
+  # kable_styling(bootstrap_options = c("hover", "condensed"))
 ```
 
 
@@ -233,8 +267,17 @@ make_dt(df3_p)
 ```
 
 # Startup
+
 ```{r startup, layout='l-screen'}
 df4 <- loop_feeds(feeds$startup) 
 df4_p <- process_feed(df4)
 make_dt(df4_p)
+```
+
+# Podcasts
+
+```{r podcasts, layout='l-screen'}
+df5 <- loop_feeds(feeds$podcasts) 
+df5_p <- process_feed(df5)
+make_dt(df5_p)
 ```
