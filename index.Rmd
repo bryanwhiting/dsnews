@@ -199,7 +199,7 @@ process_feed <- function(df){
                  '<details><summary>', 
                  substring(item_description, 1, 100),
                  '</summary>',
-                 substring(item_description, 101, 1000000),
+                 substring(item_description, 101, 500),
                  '</details>')
         )
       ),
@@ -268,12 +268,10 @@ df1_p <- process_feed(df1)
 
 # https://rstudio.github.io/crosstalk/
 sd <- SharedData$new(df1_p)
-bscols(
-  filter_slider("rand", label="Random article filterer", 
+filter_slider("rand", label="Random article filterer", 
                 sd, column=~rand, step=0.01,
-                min=0, max=1),
-  filter_select("feed", label="Feed", sd, group=~feed_title)
-)
+                min=0, max=1)
+filter_select("feed", label="Feed", sd, group=~feed_title)
 make_dt(sd)
 
 ```
