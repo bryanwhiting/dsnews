@@ -320,7 +320,7 @@ make_dt(sd)
 
 
 # Tech news
-```{r tech, layout='l-screen'}
+```{r tech, layout='l-page'}
 df3 <- loop_feeds(feeds$tech) 
 df3_p <- process_feed(df3)
 sd <- SharedData$new(df3_p)
@@ -335,7 +335,7 @@ make_dt(sd)
 
 # Startup
 
-```{r startup, layout='l-screen'}
+```{r startup, layout='l-page'}
 df4 <- loop_feeds(feeds$startup) 
 df4_p <- process_feed(df4)
 sd <- SharedData$new(df4_p)
@@ -350,7 +350,7 @@ make_dt(sd)
 
 # Podcasts
 
-```{r podcasts, layout='l-screen'}
+```{r podcasts, layout='l-page'}
 df5 <- loop_feeds(feeds$podcasts) 
 df5_p <- process_feed(df5)
 sd <- SharedData$new(df5_p)
