@@ -13,12 +13,13 @@ site: distill::distill_website
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
-# setwd("~/github/news-ds")
+# setwd("~/github/dsnews")
 # renv::init()
+# renv::activate()
 # install.packages('install.load')
 # distill needs to be installed, even if not loaded
 # install.packages('distill')
-install.load::install_load('tidyRSS', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT', 'glue')
+install.load::install_load('tidyRSS', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT', 'rvest', 'stringr', 'crosstalk')
 
 # colors for pander palette
 # ggthemes::palette_pander(10)
@@ -41,16 +42,19 @@ dk_orange = "#D55E00"
 # Learn more about publishing to GitHub Pages at:
 # https://rstudio.github.io/distill/publish_website.html#github-pages
 
+
 ```
 
 ```{r feeds}
+
+# https://github.com/kilimchoi/engineering-blogs
+# https://github.com/kilimchoi/engineering-blogs/blob/master/engineering_blogs.opml
 
 feeds = list(
     'engineering'= c(
         'openai'= 'https://blog.openai.com/rss/',
         'fb'= 'https://research.fb.com/feed/',
         'airbnb-ds'= 'https://medium.com/feed/airbnb-engineering/tagged/data-science',
-        'ggl_dev'= 'http://feeds.feedburner.com/GDBcode',
         'ggl_ai'= 'http://feeds.feedburner.com/blogspot/gJZg',
         'instacart'= ' https://tech.instacart.com/feed',
         'Google Developers'= 'http://feeds.feedburner.com/GDBcode',
@@ -61,14 +65,19 @@ feeds = list(
         'netflix_tech'= 'https://medium.com/feed/netflix-techblog',
         'pinterest'= 'https://medium.com/feed/@Pinterest_Engineering',
         'sebrash'= 'https://sebastianraschka.com/rss_feed.xml',
-        'zillow'= 'https://www.zillow.com/tech/feed/'
+        'zillow'= 'https://www.zillow.com/tech/feed/',
+        'acing-ai' = 'https://medium.com/feed/acing-ai'
     ),
     'tutorials'= c(
         # 'databricks'= 'https://databricks.com/feed',
         'datacamp'= 'https://www.datacamp.com/community/rss.xml',
         'ml_mast'= 'https://machinelearningmastery.com/blog/feed/',
         'twrds'= 'https://towardsdatascience.com/feed/',
-        'devto'= 'https://dev.to/feed'
+        'devto'= 'https://dev.to/feed',
+        # move these to "news"
+        'datafloq'='https://datafloq.com/read/feed.rss',
+        'kdd'='http://feeds.feedburner.com/kdnuggets-data-mining-analytics',
+        'r-bloggers'='https://feeds.feedburner.com/RBloggers'
     ),
     'general'= c(
         'gnews'= 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US&ned=us&gl=US',
@@ -83,6 +92,7 @@ feeds = list(
         'Snopes'= 'https://www.snopes.com/feed/'
     ),
     'tech'= c(
+      'dataconomy' = 'https://dataconomy.com/feed/',
         'mit'= 'https://www.technologyreview.com/stories.rss',
         'fc'= 'https://www.fastcompany.com/technology/rss',
         # 'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
@@ -197,23 +207,36 @@ process_feed <- function(df){
       # post = paste(blog, cell_spec(date, 'html', link=item_link), item_description)
       blog = paste0(blank_date, blog, '<br>', date_fmt)
     ) %>%
-    select(blog, post) 
+    mutate(rand=runif(n())) %>%
+    select(blog, post, feed_title, rand) 
 }
 # df1_p <- process_feed(df1)
 # make_dt(df1_p)
 
 make_dt <- function(df) {
+  
+  
   datatable(
     df, 
     escape=F,
     rownames=F,
     colnames = c('Blog', 'Post'),
+    # class='compact',
+    # extensions='Scroller',
     # search isn't necessary as global search is good enough
     # filter='top',
     options = list(
+      # hide random columns
+      columnDefs = list(list(visible=FALSE, targets=c(2, 3))),
       pageLength = 10,
       dom = 'ftlp',
-      lengthMenu = c(5, 10, 15, 20),
+      # pageLength = 1000,
+      # dom = 'ft',
+      lengthMenu = c(10, 50, 10000),
+      # deferRender=TRUE,
+      # scrollY=300,
+      # scroller=TRUE,
+      
       # enforce column width
       # autoWidth = TRUE,
       # columnDefs = list(list(width = '50px', targets = c(0, 1))),
@@ -227,7 +250,7 @@ make_dt <- function(df) {
     )
   )
 }
-
+# make_dt(df1_p)
 
 # TODO: try out kable for neat columns (better mobile?)
 # kable(list(x, x, x), "html", escape = FALSE) %>%
@@ -237,20 +260,56 @@ make_dt <- function(df) {
 
 
 
-# Tech/ML/DS blogs
+# Tech + Engineering Blogs
 
-```{r ds, layout='l-screen'}
+```{r ds, layout='l-page'}
 df1 <- loop_feeds(feeds$engineering) 
-df1_p <- process_feed(df1)
-make_dt(df1_p)
+df1_p <- process_feed(df1) 
+
+# https://rstudio.github.io/crosstalk/
+sd <- SharedData$new(df1_p)
+bscols(
+  filter_slider("rand", label="Random article filterer", 
+                sd, column=~rand, step=0.01,
+                min=0, max=1),
+  filter_select("feed", label="Feed", sd, group=~feed_title)
+)
+make_dt(sd)
+
 ```
 
 # Tutorials
 
-```{r tutorials, layout='l-screen'}
+```{r tutorials, layout='l-page'}
+# add datatau
+datatau <- read_html("http://www.datatau.com/rss") %>% 
+  html_text() %>% 
+  str_split("]]") %>%
+  .[[1]] %>%
+  str_match(., ">(.*)(https://.*)(http[s]?://.*)") %>% 
+  as.data.frame() %>%
+  select(V2, V3) %>%
+  rename(item_title=V2, item_link=V3) %>%
+  drop_na() %>%
+  as_tibble() %>%
+  mutate(feed_title='DataTau', feed_link='http://www.datatau.com', item_pub_date = now())
+
 df2 <- loop_feeds(feeds$tutorials) 
-df2_p <- process_feed(df2)
-make_dt(df2_p)
+for (c in names(df2)) {if (!(c %in% names(datatau))) datatau[c] = NA}
+df2_plus <- df2 %>% rbind(datatau)
+df2_p <- process_feed(df2_plus)
+
+sd <- SharedData$new(df2_p)
+bscols(
+  filter_slider("rand", label="Random article filterer", 
+                sd, column=~rand, step=0.01,
+                min=0, max=1),
+  filter_select("feed", label="Feed", sd, group=~feed_title)
+)
+make_dt(sd)
+
+
+
 ```
 
 ```{r}
@@ -264,7 +323,14 @@ make_dt(df2_p)
 ```{r tech, layout='l-screen'}
 df3 <- loop_feeds(feeds$tech) 
 df3_p <- process_feed(df3)
-make_dt(df3_p)
+sd <- SharedData$new(df3_p)
+bscols(
+  filter_slider("rand", label="Random article filterer", 
+                sd, column=~rand, step=0.01,
+                min=0, max=1),
+  filter_select("feed", label="Feed", sd, group=~feed_title)
+)
+make_dt(sd)
 ```
 
 # Startup
@@ -272,7 +338,14 @@ make_dt(df3_p)
 ```{r startup, layout='l-screen'}
 df4 <- loop_feeds(feeds$startup) 
 df4_p <- process_feed(df4)
-make_dt(df4_p)
+sd <- SharedData$new(df4_p)
+bscols(
+  filter_slider("rand", label="Random article filterer", 
+                sd, column=~rand, step=0.01,
+                min=0, max=1),
+  filter_select("feed", label="Feed", sd, group=~feed_title)
+)
+make_dt(sd)
 ```
 
 # Podcasts
@@ -280,5 +353,14 @@ make_dt(df4_p)
 ```{r podcasts, layout='l-screen'}
 df5 <- loop_feeds(feeds$podcasts) 
 df5_p <- process_feed(df5)
-make_dt(df5_p)
+sd <- SharedData$new(df5_p)
+bscols(
+  filter_slider("rand", label="Random article filterer", 
+                sd, column=~rand, step=0.01,
+                min=0, max=1),
+  filter_select("feed", label="Feed", sd, group=~feed_title)
+)
+make_dt(sd)
 ```
+
+
