@@ -12,7 +12,8 @@ site: distill::distill_website
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+start_time = Sys.time()
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, layout='l-page')
 # setwd("~/github/dsnews")
 # renv::init()
 # renv::activate()
@@ -50,75 +51,123 @@ dk_orange = "#D55E00"
 # https://github.com/kilimchoi/engineering-blogs
 # https://github.com/kilimchoi/engineering-blogs/blob/master/engineering_blogs.opml
 
+# to fix:
+# https://bair.berkeley.edu/blog/feed
+# https://engineering.foursquare.com/feed
+# http://engineering.shopify.com/blogs/engineering.atom
+# https://instagram-engineering.com/feed
+
 feeds = list(
-    'engineering'= c(
-        'openai'= 'https://blog.openai.com/rss/',
-        'fb'= 'https://research.fb.com/feed/',
-        'airbnb-ds'= 'https://medium.com/feed/airbnb-engineering/tagged/data-science',
-        'ggl_ai'= 'http://feeds.feedburner.com/blogspot/gJZg',
-        'instacart'= ' https://tech.instacart.com/feed',
-        'Google Developers'= 'http://feeds.feedburner.com/GDBcode',
-        'Google Open Source'= 'http://feeds.feedburner.com/GoogleOpenSourceBlog',
-        'fb_code'= 'https://code.fb.com/feed/',
-        'uber_ai'= 'https://eng.uber.com/tag/uber-ai-labs/feed',
-        'uber_eng'= 'https://eng.uber.com/feed',
-        'netflix_tech'= 'https://medium.com/feed/netflix-techblog',
-        'pinterest'= 'https://medium.com/feed/@Pinterest_Engineering',
-        'sebrash'= 'https://sebastianraschka.com/rss_feed.xml',
-        'zillow'= 'https://www.zillow.com/tech/feed/',
-        'acing-ai' = 'https://medium.com/feed/acing-ai'
-    ),
-    'tutorials'= c(
-        # 'databricks'= 'https://databricks.com/feed',
-        'datacamp'= 'https://www.datacamp.com/community/rss.xml',
-        'ml_mast'= 'https://machinelearningmastery.com/blog/feed/',
-        'twrds'= 'https://towardsdatascience.com/feed/',
-        'devto'= 'https://dev.to/feed',
-        # move these to "news"
-        'datafloq'='https://datafloq.com/read/feed.rss',
-        'kdd'='http://feeds.feedburner.com/kdnuggets-data-mining-analytics',
-        'r-bloggers'='https://feeds.feedburner.com/RBloggers'
-    ),
-    'general'= c(
-        'gnews'= 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US&ned=us&gl=US',
-        'espn'= 'http://www.espn.com/espn/rss/news',
-        'Science'= 'http://feeds.reuters.com/reuters/scienceNews',
-        'TopNews'= 'http://feeds.reuters.com/reuters/topNews',
-        'World News'= 'http://feeds.reuters.com/Reuters/worldNews',
-        'Sports News'= 'http://feeds.reuters.com/reuters/sportsNews',
-        'BBC'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml',
-        'BBC US'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml?edition=us',
-        'BBC International'= 'http://feeds.bbci.co.uk/news/rss.xml?edition=int',
-        'Snopes'= 'https://www.snopes.com/feed/'
-    ),
-    'tech'= c(
-      'dataconomy' = 'https://dataconomy.com/feed/',
-        'mit'= 'https://www.technologyreview.com/stories.rss',
-        'fc'= 'https://www.fastcompany.com/technology/rss',
-        # 'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
-        'bbc'= 'http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
-        'tc'= 'https://techcrunch.com/startups/feed/',
-        'vb'= 'https://venturebeat.com/feed/'
-    ),
-    'startups'= c(
-        'tim_ferris'= 'https://tim.blog/feed/',
-        'avc'= 'http://feeds.feedburner.com/avc',
-        'andrew_chen'= 'https://andrewchen.co/feed/',
-        'ycombinator'= 'https://blog.ycombinator.com/feed/',
-        'A Horowitz'= 'https://a16z.com/feed/',
-        'AVC'= 'https://avc.com/feed/',
-        # 'Sam Altman'= 'http://blog.samaltman.com/posts.atom',
-        'seth_godin' = 'https://seths.blog/feed/'
-    ),
-    'podcasts'=c(
-      'talkpython'= 'https://talkpython.fm/episodes/rss',
-      'data_eng_pod'='https://www.dataengineeringpodcast.com/feed/',
-      'dataframed'='https://www.datacamp.com/community/rss.xml',
-      'freakonomics'='http://feeds.feedburner.com/freakonomicsradio'
-    ),
-    'religious'= c(
-        'lds'= 'https://www.mormonnewsroom.org/rss'
-    )
+  'engineering'= c(
+    'openai'= 'https://blog.openai.com/rss/',
+    'fb'= 'https://research.fb.com/feed/',
+    'airbnb-ds'= 'https://medium.com/feed/airbnb-engineering/tagged/data-science',
+    'ggl_ai'= 'http://feeds.feedburner.com/blogspot/gJZg',
+    'instacart'= ' https://tech.instacart.com/feed',
+    'Google Developers'= 'http://feeds.feedburner.com/GDBcode',
+    'Google Open Source'= 'http://feeds.feedburner.com/GoogleOpenSourceBlog',
+    'fb_code'= 'https://code.fb.com/feed/',
+    'uber_ai'= 'https://eng.uber.com/tag/uber-ai-labs/feed',
+    'uber_eng'= 'https://eng.uber.com/feed',
+    'netflix_tech'= 'https://medium.com/feed/netflix-techblog',
+    'pinterest'= 'https://medium.com/feed/@Pinterest_Engineering',
+    'sebrash'= 'https://sebastianraschka.com/rss_feed.xml',
+    'zillow'= 'https://www.zillow.com/tech/feed/',
+    'acing-ai' = 'https://medium.com/feed/acing-ai',
+    # https://dropbox.tech/machine-learning/feed
+    # 'doordash' = 'https://doordash.engineering/category/data-science-and-machine-learning/feed/'
+    'dropbox' = 'https://dropbox.tech/feed', 
+    'doordash' = 'https://doordash.engineering/feed/',
+    'yelp' = 'https://engineeringblog.yelp.com/feed.xml',
+    'foursquare' = 'https://engineering.foursquare.com/feed',
+    'squarespace'='https://engineering.squarespace.com/blog?format=RSS',
+    'shopify' = 'http://engineering.shopify.com/blogs/engineering.atom',
+    'microsoft'='https://devblogs.microsoft.com/python/feed/',
+    'expedia'='https://medium.com/feed/expedia-group-tech',
+    # 'instagram'='https://instagram-engineering.com/feed',
+    'quickbooks'='https://quickbooks-engineering.intuit.com/feed',
+    'kickstarter'='https://kickstarter.engineering/feed',
+    'lyft'='https://eng.lyft.com/feed',
+    'medium'='https://medium.com/feed/medium-eng',
+    'slack'='https://slack.engineering/feed/',
+    'spotify'='https://engineering.atspotify.com/feed/',
+    'strava'='https://medium.com/feed/strava-engineering',
+    'twitter'='https://blog.twitter.com/engineering/feed',
+    'blackrock'='https://medium.com/feed/blackrock-engineering',
+    'capitalone'='https://medium.com/feed/capital-one-tech'
+  ),
+  'tutorials'= c(
+    # 'databricks'= 'https://databricks.com/feed',
+    'datacamp'= 'https://www.datacamp.com/community/rss.xml',
+    'ml_mast'= 'https://machinelearningmastery.com/blog/feed/',
+    'twrds'= 'https://towardsdatascience.com/feed/',
+    'devto'= 'https://dev.to/feed',
+    'r-bloggers'='https://feeds.feedburner.com/RBloggers'
+  ),
+  'world'= c(
+    'gnews'= 'https://news.google.com/news/rss/?hl=en&amp;ned=us&amp;gl=US&ned=us&gl=US',
+    'espn'= 'http://www.espn.com/espn/rss/news',
+    'Science'= 'http://feeds.reuters.com/reuters/scienceNews',
+    'TopNews'= 'http://feeds.reuters.com/reuters/topNews',
+    'World News'= 'http://feeds.reuters.com/Reuters/worldNews',
+    'Sports News'= 'http://feeds.reuters.com/reuters/sportsNews',
+    'BBC'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml',
+    'BBC US'= 'http://feeds.bbci.co.uk/news/video_and_audio/news_front_page/rss.xml?edition=us',
+    'BBC International'= 'http://feeds.bbci.co.uk/news/rss.xml?edition=int',
+    'Snopes'= 'https://www.snopes.com/feed/'
+  ),
+  'tech'= c(
+    'economist' = 'https://www.economist.com/science-and-technology/rss.xml',
+    'dataconomy' = 'https://dataconomy.com/feed/',
+    'mit'= 'https://www.technologyreview.com/stories.rss',
+    'fc'= 'https://www.fastcompany.com/technology/rss',
+    # 'reuters'= 'http://feeds.reuters.com/reuters/technologyNews',
+    'bbc'= 'http://feeds.bbci.co.uk/news/video_and_audio/technology/rss.xml',
+    'tc'= 'https://techcrunch.com/startups/feed/',
+    'vb'= 'https://venturebeat.com/feed/'
+  ),
+  # https://www.economist.com/rss
+  'economist' = c(
+    'game theory' = 'https://www.economist.com/game-theory/rss.xml',
+    'graphic' = 'https://www.economist.com/graphic-detail/rss.xml',
+    'leaders' = 'https://www.economist.com/leaders/rss.xml',
+    'business' = 'https://www.economist.com/business/rss.xml',
+    'economist' = 'https://www.economist.com/science-and-technology/rss.xml',
+    'finance-econ' = 'https://www.economist.com/finance-and-economics/rss.xml',
+    'arts' = 'https://www.economist.com/books-and-arts/rss.xml',
+    'indicators' = 'https://www.economist.com/economic-and-financial-indicators/rss.xml'
+  ),
+  'general' = c(
+    # move these to "news"
+    'datafloq'='https://datafloq.com/read/feed.rss',
+    'kdd'='http://feeds.feedburner.com/kdnuggets-data-mining-analytics',
+    'smartdata' = 'https://www.smartdatacollective.com/feed/',
+    'insidebigdata' = 'https://insidebigdata.com/feed/'
+  ),
+  'dataviz' = c(
+    'economist' = 'https://www.economist.com/graphic-detail/rss.xml',
+    'flowingdata' = 'https://flowingdata.com/feed',
+    'infoisbeaut' = 'http://feeds.feedburner.com/InformationIsBeautiful'
+  ),
+  'startups'= c(
+    'tim_ferris'= 'https://tim.blog/feed/',
+    'avc'= 'http://feeds.feedburner.com/avc',
+    'andrew_chen'= 'https://andrewchen.co/feed/',
+    'ycombinator'= 'https://blog.ycombinator.com/feed/',
+    'A Horowitz'= 'https://a16z.com/feed/',
+    'AVC'= 'https://avc.com/feed/',
+    # 'Sam Altman'= 'http://blog.samaltman.com/posts.atom',
+    'seth_godin' = 'https://seths.blog/feed/'
+  ),
+  'podcasts'=c(
+    'talkpython'= 'https://talkpython.fm/episodes/rss',
+    'data_eng_pod'='https://www.dataengineeringpodcast.com/feed/',
+    'dataframed'='https://www.datacamp.com/community/rss.xml',
+    'freakonomics'='http://feeds.feedburner.com/freakonomicsradio'
+  ),
+  'religious'= c(
+    'lds'= 'https://www.mormonnewsroom.org/rss'
+  )
 )
 
 ```
@@ -188,7 +237,7 @@ process_feed <- function(df){
         format(item_pub_date, '%a %m/%d'),
         date_diff
       ),
-      blog = cell_spec(feed_title, "html", link=feed_link, new_tab=T),
+      blog_title = cell_spec(feed_title, "html", link=feed_link, new_tab=T),
       # blog = paste0('<a href="', feed_title,  '" color="#fff" background-color:"#999999">'), 
       # blog = cell_spec(feed_title, "html",  link=feed_link,  color="#fff", underline=F, background=gray),
       linked_title = cell_spec(item_title, 'html', link=item_link, new_tab=T),
@@ -203,36 +252,48 @@ process_feed <- function(df){
                  '</details>')
         )
       ),
+      blank_rand = paste0('<p style="display:none">', runif(n()), '</p>'),
       # post = paste0(blank_date, post, " | ", date_fmt, " | ", blog)
       # post = paste(blog, cell_spec(date, 'html', link=item_link), item_description)
-      blog = paste0(blank_date, blog, '<br>', date_fmt)
+      # blog = paste0(blank_date, blog_title, '<br>', date_fmt),
+      blog = paste0(blank_date, date_fmt),
+      post = paste0(blank_rand, post)
     ) %>%
     mutate(rand=runif(n())) %>%
-    select(blog, post, feed_title, rand) 
+    select(blog, post, blog_title, feed_title, rand) 
 }
 # df1_p <- process_feed(df1)
 # make_dt(df1_p)
 
 make_dt <- function(df) {
-  
-  
   datatable(
     df, 
     escape=F,
     rownames=F,
-    colnames = c('Blog', 'Post'),
+    colnames = c('Date', 'Post'),
     # class='compact',
     # extensions='Scroller',
+    extensions=c('FixedHeader', 'RowGroup'),
     # search isn't necessary as global search is good enough
     # filter='top',
     options = list(
       # hide random columns
-      columnDefs = list(list(visible=FALSE, targets=c(2, 3))),
-      pageLength = 10,
-      dom = 'ftlp',
+      columnDefs = list(
+        list(
+          visible=FALSE, targets=c(2, 3, 4)
+        )
+        #, # extensions = SearchPanes
+        # list(
+        #   searchPanes = list(show = TRUE), targets = 2
+        # )
+      ),
+      rowGroup=list(dataSrc=2),
+      pageLength = 3,
+      dom = 'Pflptr', #i
       # pageLength = 1000,
       # dom = 'ft',
       lengthMenu = c(10, 50, 10000),
+      fixedHeader=T,
       # deferRender=TRUE,
       # scrollY=300,
       # scroller=TRUE,
@@ -256,25 +317,43 @@ make_dt <- function(df) {
 # kable(list(x, x, x), "html", escape = FALSE) %>%
 # kable_styling(bootstrap_options = c("hover", "condensed"))
 
+
+# https://rstudio.github.io/crosstalk/
+my_bscols <- function(sd){
+  return(
+    bscols(
+      # filter_slider("rand", label="Random article filterer", 
+      #               sd, column=~rand, step=0.01,
+      #               min=0, max=1),
+      filter_select("feed", label="Feed", sd, group=~feed_title)
+    )
+  )
+}
 ```
 
 
 
 # Tech + Engineering Blogs
 
-```{r ds, layout='l-page'}
+```{r techeng}
 df1 <- loop_feeds(feeds$engineering) 
-df1_p <- process_feed(df1) 
-
-# https://rstudio.github.io/crosstalk/
-sd <- SharedData$new(df1_p)
-filter_slider("rand", label="Random article filterer", 
-                sd, column=~rand, step=0.01,
-                min=0, max=1)
-filter_select("feed", label="Feed", sd, group=~feed_title)
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
 make_dt(sd)
 
 ```
+
+# Economist
+
+```{r economist}
+df1 <- loop_feeds(feeds$economist) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
+make_dt(sd)
+```
+
 
 # Tutorials
 
@@ -292,73 +371,65 @@ datatau <- read_html("http://www.datatau.com/rss") %>%
   as_tibble() %>%
   mutate(feed_title='DataTau', feed_link='http://www.datatau.com', item_pub_date = now())
 
-df2 <- loop_feeds(feeds$tutorials) 
-for (c in names(df2)) {if (!(c %in% names(datatau))) datatau[c] = NA}
-df2_plus <- df2 %>% rbind(datatau)
-df2_p <- process_feed(df2_plus)
+df1 <- loop_feeds(feeds$tutorials) 
+for (c in names(df1)) {if (!(c %in% names(datatau))) datatau[c] = NA}
+df2 <- df1 %>% rbind(datatau)
+df3 <- process_feed(df2)
 
-sd <- SharedData$new(df2_p)
-bscols(
-  filter_slider("rand", label="Random article filterer", 
-                sd, column=~rand, step=0.01,
-                min=0, max=1),
-  filter_select("feed", label="Feed", sd, group=~feed_title)
-)
+# produce table
+sd <- SharedData$new(df3)
+my_bscols(sd)
 make_dt(sd)
 
-
-
 ```
 
-```{r}
-## DS + tutorials
-# kable(list(head(df1_p, 20), head(df2_p, 20)), 'html', escape=F) %>%
-  # kable_styling(bootstrap_options = c("hover", "condensed"))
-```
+# Data Viz
 
+```{r dataviz}
+df1 <- loop_feeds(feeds$dataviz) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
+make_dt(sd)
+```
 
 # Tech news
 ```{r tech, layout='l-page'}
-df3 <- loop_feeds(feeds$tech) 
-df3_p <- process_feed(df3)
-sd <- SharedData$new(df3_p)
-bscols(
-  filter_slider("rand", label="Random article filterer", 
-                sd, column=~rand, step=0.01,
-                min=0, max=1),
-  filter_select("feed", label="Feed", sd, group=~feed_title)
-)
+df1 <- loop_feeds(feeds$tech) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
 make_dt(sd)
 ```
 
 # Startup
 
 ```{r startup, layout='l-page'}
-df4 <- loop_feeds(feeds$startup) 
-df4_p <- process_feed(df4)
-sd <- SharedData$new(df4_p)
-bscols(
-  filter_slider("rand", label="Random article filterer", 
-                sd, column=~rand, step=0.01,
-                min=0, max=1),
-  filter_select("feed", label="Feed", sd, group=~feed_title)
-)
+df1 <- loop_feeds(feeds$startup) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
 make_dt(sd)
 ```
 
 # Podcasts
 
 ```{r podcasts, layout='l-page'}
-df5 <- loop_feeds(feeds$podcasts) 
-df5_p <- process_feed(df5)
-sd <- SharedData$new(df5_p)
-bscols(
-  filter_slider("rand", label="Random article filterer", 
-                sd, column=~rand, step=0.01,
-                min=0, max=1),
-  filter_select("feed", label="Feed", sd, group=~feed_title)
-)
+df1 <- loop_feeds(feeds$podcasts) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
 make_dt(sd)
 ```
 
+# World News
 
+```{r world, layout='l-page'}
+df1 <- loop_feeds(feeds$world) 
+df2 <- process_feed(df1) 
+sd <- SharedData$new(df2)
+my_bscols(sd)
+make_dt(sd)
+```
+
+_Page compile time: `r Sys.time() - start_time`_.
