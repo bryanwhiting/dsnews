@@ -79,9 +79,9 @@ feeds = list(
     'dropbox' = 'https://dropbox.tech/feed', 
     'doordash' = 'https://doordash.engineering/feed/',
     'yelp' = 'https://engineeringblog.yelp.com/feed.xml',
-    'foursquare' = 'https://engineering.foursquare.com/feed',
+    # 'foursquare' = 'https://engineering.foursquare.com/feed',
     'squarespace'='https://engineering.squarespace.com/blog?format=RSS',
-    'shopify' = 'http://engineering.shopify.com/blogs/engineering.atom',
+    # 'shopify' = 'http://engineering.shopify.com/blogs/engineering.atom',
     'microsoft'='https://devblogs.microsoft.com/python/feed/',
     'expedia'='https://medium.com/feed/expedia-group-tech',
     # 'instagram'='https://instagram-engineering.com/feed',
@@ -288,11 +288,11 @@ make_dt <- function(df) {
         # )
       ),
       rowGroup=list(dataSrc=2),
-      pageLength = 3,
-      dom = 'Pflptr', #i
+      pageLength = 7,
+      dom = 'flptr', #iP
       # pageLength = 1000,
       # dom = 'ft',
-      lengthMenu = c(10, 50, 10000),
+      lengthMenu = c(7, 50, 10000),
       fixedHeader=T,
       # deferRender=TRUE,
       # scrollY=300,

@@ -6,6 +6,7 @@ description: |
   data scientist's attempt to de-personalize data science news and just let 
   you know what's happening.
 output_dir: "docs"
+google_analytics: "UA-183734596-1"
 navbar:
   right:
     - text: "Home"
