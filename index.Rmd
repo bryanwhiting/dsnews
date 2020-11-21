@@ -437,10 +437,10 @@ This table combines all the news feeds above it into one, searchable table.
 sd <- SharedData$new(process_feed(all_df))
 my_bscols(sd)
 make_dt(sd)
-# save out 10 random articls
+# save out 24 random articls
 all_df %>%
   group_by(topic) %>%
-  do(sample_n(., size=2)) %>%
+  do(sample_n(., size=4)) %>%
   write_csv(., 'output/random_articles.csv')
 ```
 
