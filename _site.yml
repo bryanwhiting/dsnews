@@ -15,6 +15,7 @@ navbar:
       href: about.html
 output: 
   distill::distill_article: 
-    toc: True
-    toc_depth: 1
+    toc: true
+    toc_depth: 2
+    toc_float: false
     css: styles.css
