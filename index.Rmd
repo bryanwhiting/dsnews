@@ -10,7 +10,7 @@ site: distill::distill_website
 
 **Last updated `r format(lubridate::now("US/Pacific"), '%a, %b %d %I:%M %p')`** PST.
 
-This is news at your fingertips. It's simply an RSS news aggregator across DS blogs around the web. It's not ranked or personalized, just sorted by publication date. Each table can be filtered by author (using `Feed` search), searched using regular expresssions (table search), or sorted by date or post. 
+_This is news re-imagined_. Not really. It's simply an RSS news aggregator across DS blogs around the web. It's not ranked or personalized. Just sorted by publication date. Each table can be filtered by author (using `Feed` search), searched using regular expresssions (table search), or sorted by date or post. 
 
 ```{r setup, include=FALSE}
 start_time = Sys.time()
@@ -346,7 +346,7 @@ sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
 all_df = rbind(all_df, df1)
-all_df['topic'] = 'engineering'
+all_df['topic'] = '#tech #engineering'
 ```
 
 
@@ -376,7 +376,7 @@ sd <- SharedData$new(df3)
 my_bscols(sd)
 make_dt(sd)
 
-df1['topic'] = 'tutorials'
+df1['topic'] = '#datascience #tutorials'
 all_df = rbind(all_df, df1)
 ```
 
@@ -389,7 +389,7 @@ sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
 
-df1['topic'] = 'dataviz'
+df1['topic'] = '#dataviz'
 all_df = rbind(all_df, df1)
 ```
 
@@ -400,7 +400,7 @@ df2 <- process_feed(df1)
 sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
-df1['topic'] = 'tech-news'
+df1['topic'] = '#tech #news'
 all_df = rbind(all_df, df1)
 ```
 
@@ -412,8 +412,8 @@ df2 <- process_feed(df1)
 sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
-df1['topic'] = 'startups'
-all_df = rbind(all_df, df1)
+# df1['topic'] = 'startups'
+# all_df = rbind(all_df, df1)
 ```
 
 # Podcasts
@@ -424,7 +424,11 @@ df2 <- process_feed(df1)
 sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
-df1['topic'] = 'podcasts'
+df1 %<>%
+  mutate(topic = case_when(
+    str_detect(feed_link, 'freak') ~ "#economics #podcast",
+    TRUE ~ "#datascience #ds #podcast"
+  ))
 all_df = rbind(all_df, df1)
 ```
 
@@ -441,6 +445,7 @@ make_dt(sd)
 all_df %>%
   group_by(topic) %>%
   do(sample_n(., size=4)) %>%
+  head(24) %>%
   write_csv(., 'output/random_articles.csv')
 ```
 
