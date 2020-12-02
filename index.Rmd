@@ -354,25 +354,50 @@ all_df['topic'] = '#tech #engineering'
 
 ```{r tutorials, layout='l-page'}
 # add datatau
-datatau <- read_html("http://www.datatau.com/rss") %>% 
-  html_text() %>% 
-  str_split("]]") %>%
-  .[[1]] %>%
-  str_match(., ">(.*)(https://.*)(http[s]?://.*)") %>% 
-  as.data.frame() %>%
-  select(V2, V3) %>%
-  rename(item_title=V2, item_link=V3) %>%
-  drop_na() %>%
-  as_tibble() %>%
-  mutate(feed_title='DataTau', feed_link='http://www.datatau.com', item_pub_date = now())
-
 df1 <- loop_feeds(feeds$tutorials) 
-for (c in names(df1)) {if (!(c %in% names(datatau))) datatau[c] = NA}
-df2 <- df1 %>% rbind(datatau)
-df3 <- process_feed(df2)
 
+# TODO: scrape deepai.org and arXiv
+# 
+# read_html("http://www.deepai.org") %>%
+#   # html_nodes(".card") %>%
+#   html_nodes("#title") %>%
+#   html_attr("href")
+#   html_text
+#   # html_nodes("#trending")
+#   html_attrs()
+#   # html_text()
+# 
+# x <- read_html("http://www.deepai.org") %>%
+#   html_nodes('.card')
+#   
+# read_html("http://www.deepai.org") %>%
+#   html_nodes(".title , .title a") %>%
+#   html_attr('href')
+#   html_text
+#   
+
+
+try({
+  datatau <- read_html("http://www.datatau.com/rssxx") %>% 
+    html_text() %>% 
+    str_split("]]") %>%
+    .[[1]] %>%
+    str_match(., ">(.*)(https://.*)(http[s]?://.*)") %>% 
+    as.data.frame() %>%
+    select(V2, V3) %>%
+    rename(item_title=V2, item_link=V3) %>%
+    drop_na() %>%
+    as_tibble() %>%
+    mutate(feed_title='DataTau', 
+           feed_link='http://www.datatau.com', 
+           item_pub_date = now())
+  for (c in names(df1)) {if (!(c %in% names(datatau))) datatau[c] = NA}
+  df1 <- df1 %>% rbind(datatau)
+})
+
+df2 <- process_feed(df1)
 # produce table
-sd <- SharedData$new(df3)
+sd <- SharedData$new(df2)
 my_bscols(sd)
 make_dt(sd)
 
