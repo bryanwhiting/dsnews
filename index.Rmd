@@ -1,16 +1,13 @@
 ---
 title: "Data Science News"
 description: |
-  News is broken. Probably because a data scientist somewhere broke it somehow 
-  by creating some echo-chamber, personalization models. Well, this site is a 
-  data scientist's attempt to de-personalize data science news and just let 
-  you know what's happening. 
+  A newsfeed of data science, tech, startups, and coding articles from around the web.
 site: distill::distill_website
 ---
 
 **Last updated `r format(lubridate::now("US/Pacific"), '%a, %b %d %I:%M %p')`** PST.
 
-_This is news re-imagined_. Not really. It's simply an RSS news aggregator across DS blogs around the web. It's not ranked or personalized. Just sorted by publication date. Each table can be filtered by author (using `Feed` search), searched using regular expresssions (table search), or sorted by date or post. 
+_This is news re-imagined_. Not really. It's simply an RSS news aggregator compiled into a few, interactive tables. Each table can be filtered by author (using `Feed` search), searched using regular expresssions (table search), or sorted by date or post. 
 
 ```{r setup, include=FALSE}
 start_time = Sys.time()
