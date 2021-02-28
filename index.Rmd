@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, layout='l-
 # install.packages('install.load')
 # distill needs to be installed, even if not loaded
 # install.packages('distill')
-install.load::install_load('tidyRSS', 'dplyr', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT', 'rvest', 'stringr', 'crosstalk')
+install.load::install_load('tidyRSS', 'dplyr', 'readr', 'tidyverse', 'kableExtra', 'aRxiv', 'lubridate', 'magrittr', 'crayon', 'DT', 'rvest', 'stringr', 'crosstalk')
 
 # colors for pander palette
 # ggthemes::palette_pander(10)
