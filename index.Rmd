@@ -211,7 +211,7 @@ loop_feeds <- function(feed) {
       if ('entry_last_updated' %in% names(df_feed)) {df_feed$item_pub_date = df_feed$entry_last_updated}
       
       df <- df_feed %>% 
-        select(feed_title, feed_link,
+        dplyr::select(feed_title, feed_link,
                item_title, item_link, item_description, item_pub_date) %>%
         rbind(df, .)
     } else {
@@ -258,7 +258,7 @@ process_feed <- function(df){
       post = paste0(blank_rand, post)
     ) %>%
     mutate(rand=runif(n())) %>%
-    select(blog, post, blog_title, feed_title, rand) 
+    dplyr::select(blog, post, blog_title, feed_title, rand) 
 }
 # df1_p <- process_feed(df1)
 # make_dt(df1_p)
@@ -381,7 +381,7 @@ try({
     .[[1]] %>%
     str_match(., ">(.*)(https://.*)(http[s]?://.*)") %>% 
     as.data.frame() %>%
-    select(V2, V3) %>%
+    dplyr::select(V2, V3) %>%
     rename(item_title=V2, item_link=V3) %>%
     drop_na() %>%
     as_tibble() %>%
